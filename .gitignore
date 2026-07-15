@@ -1,2 +1,4 @@
 historico.db
 app_backup.py
+.secrets/
+.streamlit/

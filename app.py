@@ -189,6 +189,10 @@ with aba1:
         with c2: st.info(f"**Telefone / WhatsApp:**\n{info_lead['telefone']}")
         with c3: st.info(f"**Diagnóstico de Página:**\n{info_lead['status_site']}")
         
+        st.write("---")
+        # O link original já vem da extração no 'info_lead['link']'
+        st.markdown(f"**🔗 Acesso Rápido ao Google Maps:** [Clique para abrir o perfil da empresa]({info_lead['link']})")
+        
         st.caption(f"**Link de Origem Cadastrado:** {info_lead['link_coletado']}")
         
         if st.button("🚀 Obter Resumo e Gerar Site", use_container_width=True):
