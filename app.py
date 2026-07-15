@@ -135,7 +135,7 @@ if "api" in params and "nicho" in params and "cidade" in params:
 # =========================================================
 # 🦅 INTERFACE ORIGINAL DO STREAMLIT (INTEIRA E SEM CORTES)
 # =========================================================
-st.set_page_config(page_title="Phoenix Leads AI", page_icon="🦅", layout="wide")
+st.set_page_config(page_title="Phoenix Leads AI", page_icon="logo.png", layout="wide")
 
 if 'leads_salvos' not in st.session_state:
     st.session_state['leads_salvos'] = pd.DataFrame()
