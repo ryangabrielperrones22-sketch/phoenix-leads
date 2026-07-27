@@ -1,166 +1,318 @@
-/* ===== ESTILOS GERAIS ===== */
-body {
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+/* ============================================================
+   🌌 TEMA FUTURISTA NEON – Inspirado no NEXUS PLANNER
+   ============================================================ */
+
+/* ---- IMPORTA FONTES MODERNAS ---- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ---- RESET E FUNDO ---- */
+html, body, .stApp {
+    background: linear-gradient(145deg, #0a0a12 0%, #12121f 40%, #1a1a2e 100%) !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    color: #e5e7eb !important;
+    min-height: 100vh;
 }
 
-.stApp {
-    background-color: #f8f9fa;
+/* ---- ELEMENTOS COM GLASSMORPHISM ---- */
+.glass, .stAlert, .stInfo, .stSuccess, .stWarning, .stException,
+.element-container, .stMarkdown, .stDataFrame, .stTabs [data-baseweb="tab-panel"] {
+    background: rgba(26, 26, 46, 0.78) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(0, 245, 255, 0.12) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* ===== TÍTULOS ===== */
-h1, h2, h3, h4, h5 {
+/* ---- TÍTULOS COM NEON ---- */
+h1, h2, h3, h4, h5, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
     font-weight: 700 !important;
-    color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.25) !important;
+    letter-spacing: -0.02em !important;
 }
 
-.subtitle {
-    font-size: 1.1rem;
-    color: #6c757d;
-    margin-top: -0.5rem;
-    margin-bottom: 1.5rem;
-    font-weight: 400;
+h1 {
+    font-size: 2.5rem !important;
+    background: linear-gradient(135deg, #00f5ff, #a855f7) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    text-shadow: none !important;
 }
 
-/* ===== CARDS ===== */
-.card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px 18px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border-left: 6px solid #f97316;
+h2 {
+    color: #00f5ff !important;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2) !important;
+    padding-bottom: 0.3rem !important;
 }
 
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.10);
-}
-
-.card h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #1a1a2e;
-    font-size: 1.2rem;
-}
-
-.card p {
-    margin: 6px 0;
-    color: #333;
-    font-size: 0.95rem;
-}
-
-/* ===== BOTÕES ===== */
+/* ---- BOTÕES NEON ---- */
 .stButton > button {
-    background: linear-gradient(135deg, #f97316, #ea580c) !important;
-    color: white !important;
-    border: none !important;
+    background: linear-gradient(135deg, #00f5ff22, #a855f722) !important;
+    border: 1px solid rgba(0, 245, 255, 0.4) !important;
+    color: #00f5ff !important;
     border-radius: 50px !important;
     padding: 0.6rem 1.8rem !important;
     font-weight: 600 !important;
+    font-size: 0.9rem !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.15) !important;
+    backdrop-filter: blur(6px) !important;
 }
 
 .stButton > button:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
-    background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+    transform: scale(1.04) !important;
+    background: linear-gradient(135deg, #00f5ff44, #a855f744) !important;
+    border-color: #00f5ff !important;
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.3) !important;
+    color: #ffffff !important;
 }
 
-/* Botão WhatsApp (usado na aba 3) */
-.whatsapp-button {
-    display: inline-block;
-    background-color: #25D366;
-    color: white;
-    padding: 16px 28px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 60px;
-    text-decoration: none;
-    text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
-    width: 100%;
-    border: none;
-    cursor: pointer;
+.stButton > button:active {
+    transform: scale(0.96) !important;
 }
 
-.whatsapp-button:hover {
-    background-color: #1ebe5d;
-    transform: scale(1.02);
-    box-shadow: 0 10px 28px rgba(37, 211, 102, 0.5);
-    color: white;
-}
-
-/* ===== INPUTS E SELECTBOX ===== */
+/* ---- INPUTS E SELECTBOX ---- */
 .stTextInput > div > div > input,
-.stNumberInput > div > div > input {
+.stNumberInput > div > div > input,
+.stSelectbox > div > div,
+.stTextArea > div > div > textarea {
+    background: rgba(10, 10, 18, 0.7) !important;
+    border: 1px solid rgba(0, 245, 255, 0.25) !important;
     border-radius: 12px !important;
-    border: 2px solid #e2e8f0 !important;
+    color: #e5e7eb !important;
     padding: 10px 16px !important;
-    transition: border 0.2s ease;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    backdrop-filter: blur(4px) !important;
 }
 
 .stTextInput > div > div > input:focus,
-.stNumberInput > div > div > input:focus {
-    border-color: #f97316 !important;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+.stNumberInput > div > div > input:focus,
+.stSelectbox > div > div:focus-within,
+.stTextArea > div > div > textarea:focus {
+    border-color: #00f5ff !important;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.2) !important;
+    outline: none !important;
 }
 
 .stSelectbox > div > div {
-    border-radius: 12px !important;
+    background: rgba(10, 10, 18, 0.7) !important;
 }
 
-/* ===== ABAS ===== */
+/* ---- ABAS ESTILO NEON ---- */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 2px;
-    background-color: #ffffff;
-    padding: 8px 12px;
-    border-radius: 60px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    gap: 4px;
+    background: rgba(26, 26, 46, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    padding: 6px 10px !important;
+    border-radius: 60px !important;
+    border: 1px solid rgba(0, 245, 255, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
 .stTabs [data-baseweb="tab"] {
     border-radius: 40px !important;
     padding: 8px 24px !important;
-    font-weight: 500;
-    color: #4a5568;
-    transition: all 0.2s ease;
+    font-weight: 500 !important;
+    color: #9ca3af !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
 }
 
 .stTabs [data-baseweb="tab"][aria-selected="true"] {
-    background-color: #f97316 !important;
-    color: white !important;
+    background: linear-gradient(135deg, #00f5ff22, #a855f722) !important;
+    color: #00f5ff !important;
+    border: 1px solid rgba(0, 245, 255, 0.4) !important;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.15) !important;
 }
 
-/* ===== INFORMAÇÕES ===== */
-.stInfo {
-    background-color: #fef3c7 !important;
-    border-left: 6px solid #f59e0b !important;
+.stTabs [data-baseweb="tab"]:hover {
+    color: #ffffff !important;
+}
+
+/* ---- CARDS DE LEAD (futuristas) ---- */
+.card {
+    background: rgba(26, 26, 46, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(0, 245, 255, 0.15) !important;
+    border-radius: 16px !important;
+    padding: 18px !important;
+    margin-bottom: 16px !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(0, 245, 255, 0.5) !important;
+    box-shadow: 0 8px 40px rgba(0, 245, 255, 0.15) !important;
+}
+
+.card h4 {
+    color: #00f5ff !important;
+    font-weight: 600 !important;
+    margin-top: 0 !important;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.2) !important;
+}
+
+.card p {
+    color: #d1d5db !important;
+    font-size: 0.95rem !important;
+}
+
+/* ---- BOTÃO WHATSAPP (estilo neon) ---- */
+.whatsapp-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #25D36633, #00ff9d33) !important;
+    border: 1px solid #00ff9d66 !important;
+    color: #00ff9d !important;
+    padding: 16px 28px !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    border-radius: 60px !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.2) !important;
+    width: 100% !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+.whatsapp-button:hover {
+    background: linear-gradient(135deg, #25D36655, #00ff9d55) !important;
+    border-color: #00ff9d !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 0 45px rgba(0, 255, 157, 0.4) !important;
+    color: #ffffff !important;
+}
+
+/* ---- BARRAS DE PROGRESSO ---- */
+.stProgress > div > div > div > div {
+    background: linear-gradient(90deg, #00f5ff, #a855f7) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3) !important;
+}
+
+/* ---- ALERTAS / INFOS ---- */
+.stAlert, .stInfo, .stSuccess, .stWarning {
+    background: rgba(26, 26, 46, 0.7) !important;
+    backdrop-filter: blur(6px) !important;
+    border-left: 4px solid #00f5ff !important;
     border-radius: 12px !important;
+    color: #e5e7eb !important;
 }
 
 .stSuccess {
-    background-color: #d1fae5 !important;
-    border-left: 6px solid #10b981 !important;
-    border-radius: 12px !important;
+    border-left-color: #00ff9d !important;
 }
-
 .stWarning {
-    background-color: #fee2e2 !important;
-    border-left: 6px solid #ef4444 !important;
+    border-left-color: #eab308 !important;
+}
+.stError {
+    border-left-color: #ef4444 !important;
+}
+
+/* ---- DATAFRAME ---- */
+.stDataFrame {
+    background: rgba(26, 26, 46, 0.5) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 245, 255, 0.1) !important;
+    overflow: hidden !important;
+}
+
+.stDataFrame table {
+    background: transparent !important;
+    color: #d1d5db !important;
+}
+
+.stDataFrame thead tr th {
+    background: rgba(0, 245, 255, 0.08) !important;
+    color: #00f5ff !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2) !important;
+}
+
+.stDataFrame tbody tr:hover {
+    background: rgba(0, 245, 255, 0.05) !important;
+}
+
+/* ---- LINKS ---- */
+a {
+    color: #a855f7 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+a:hover {
+    color: #00f5ff !important;
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.3) !important;
+}
+
+/* ---- TEXTO MONO (para códigos) ---- */
+.stCodeBlock, .stMarkdown pre {
+    background: rgba(10, 10, 18, 0.8) !important;
+    border: 1px solid rgba(0, 245, 255, 0.15) !important;
     border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #a855f7 !important;
 }
 
-/* ===== PROGRESS BAR ===== */
-.stProgress > div > div > div > div {
-    background-color: #f97316 !important;
-    border-radius: 20px !important;
-}
-
-/* ===== RODAPÉ (opcional) ===== */
+/* ---- RODAPÉ (oculto) ---- */
 footer {
-    visibility: hidden;
+    visibility: hidden !important;
+}
+
+/* ---- SCROLLBAR PERSONALIZADA ---- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+::-webkit-scrollbar-thumb {
+    background: #00f5ff44;
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #00f5ff88;
+}
+
+/* ---- SELECIONADOR DE LEAD (selectbox) ---- */
+.stSelectbox label {
+    color: #9ca3af !important;
+    font-weight: 500 !important;
+}
+
+/* ---- TEXT AREA (copy) ---- */
+.stTextArea textarea {
+    background: rgba(10, 10, 18, 0.7) !important;
+    border: 1px solid rgba(0, 245, 255, 0.2) !important;
+    color: #e5e7eb !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.85rem !important;
+}
+
+/* ---- INFOBOX (colunas) ---- */
+.stInfo {
+    background: rgba(0, 245, 255, 0.06) !important;
+    border-left: 4px solid #00f5ff !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+}
+
+/* ---- RESPONSIVIDADE BÁSICA ---- */
+@media (max-width: 768px) {
+    .stTabs [data-baseweb="tab-list"] {
+        flex-wrap: wrap !important;
+        border-radius: 20px !important;
+        gap: 4px !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        padding: 6px 14px !important;
+        font-size: 0.8rem !important;
+    }
 }
