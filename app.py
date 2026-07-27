@@ -8,17 +8,272 @@ import pandas as pd
 from playwright.sync_api import sync_playwright
 
 # ============================================================
-# 🎨 CARREGAR CSS PERSONALIZADO (style.css na mesma pasta)
+# 🎨 CSS EMBUTIDO (NÃO PRECISA DE ARQUIVO EXTERNO)
 # ============================================================
-def carregar_css():
-    try:
-        with open("style.css", "r", encoding="utf-8") as f:
-            css = f.read()
-        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("Arquivo style.css não encontrado. Usando tema padrão.")
+st.set_page_config(page_title="Phoenix Leads AI", page_icon="🦅", layout="wide")
 
-carregar_css()
+css_futurista = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+html, body, .stApp {
+    background: linear-gradient(145deg, #0a0a12 0%, #12121f 40%, #1a1a2e 100%) !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    color: #e5e7eb !important;
+    min-height: 100vh;
+}
+
+.glass, .stAlert, .stInfo, .stSuccess, .stWarning, .stException,
+.element-container, .stMarkdown, .stDataFrame, .stTabs [data-baseweb="tab-panel"] {
+    background: rgba(26, 26, 46, 0.78) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(0, 245, 255, 0.12) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+h1, h2, h3, h4, h5, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    font-weight: 700 !important;
+    color: #f0f0f0 !important;
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.25) !important;
+    letter-spacing: -0.02em !important;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+    background: linear-gradient(135deg, #00f5ff, #a855f7) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    text-shadow: none !important;
+}
+
+h2 {
+    color: #00f5ff !important;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2) !important;
+    padding-bottom: 0.3rem !important;
+}
+
+.stButton > button {
+    background: linear-gradient(135deg, #00f5ff22, #a855f722) !important;
+    border: 1px solid rgba(0, 245, 255, 0.4) !important;
+    color: #00f5ff !important;
+    border-radius: 50px !important;
+    padding: 0.6rem 1.8rem !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.15) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+.stButton > button:hover {
+    transform: scale(1.04) !important;
+    background: linear-gradient(135deg, #00f5ff44, #a855f744) !important;
+    border-color: #00f5ff !important;
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stSelectbox > div > div,
+.stTextArea > div > div > textarea {
+    background: rgba(10, 10, 18, 0.7) !important;
+    border: 1px solid rgba(0, 245, 255, 0.25) !important;
+    border-radius: 12px !important;
+    color: #e5e7eb !important;
+    padding: 10px 16px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+.stTextInput > div > div > input:focus,
+.stNumberInput > div > div > input:focus,
+.stSelectbox > div > div:focus-within,
+.stTextArea > div > div > textarea:focus {
+    border-color: #00f5ff !important;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.2) !important;
+    outline: none !important;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px;
+    background: rgba(26, 26, 46, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    padding: 6px 10px !important;
+    border-radius: 60px !important;
+    border: 1px solid rgba(0, 245, 255, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 40px !important;
+    padding: 8px 24px !important;
+    font-weight: 500 !important;
+    color: #9ca3af !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(135deg, #00f5ff22, #a855f722) !important;
+    color: #00f5ff !important;
+    border: 1px solid rgba(0, 245, 255, 0.4) !important;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.15) !important;
+}
+
+.card {
+    background: rgba(26, 26, 46, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(0, 245, 255, 0.15) !important;
+    border-radius: 16px !important;
+    padding: 18px !important;
+    margin-bottom: 16px !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(0, 245, 255, 0.5) !important;
+    box-shadow: 0 8px 40px rgba(0, 245, 255, 0.15) !important;
+}
+
+.card h4 {
+    color: #00f5ff !important;
+    font-weight: 600 !important;
+    margin-top: 0 !important;
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.2) !important;
+}
+
+.card p {
+    color: #d1d5db !important;
+    font-size: 0.95rem !important;
+}
+
+.whatsapp-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #25D36633, #00ff9d33) !important;
+    border: 1px solid #00ff9d66 !important;
+    color: #00ff9d !important;
+    padding: 16px 28px !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    border-radius: 60px !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.2) !important;
+    width: 100% !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+.whatsapp-button:hover {
+    background: linear-gradient(135deg, #25D36655, #00ff9d55) !important;
+    border-color: #00ff9d !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 0 45px rgba(0, 255, 157, 0.4) !important;
+    color: #ffffff !important;
+}
+
+.stProgress > div > div > div > div {
+    background: linear-gradient(90deg, #00f5ff, #a855f7) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3) !important;
+}
+
+.stAlert, .stInfo, .stSuccess, .stWarning {
+    background: rgba(26, 26, 46, 0.7) !important;
+    backdrop-filter: blur(6px) !important;
+    border-left: 4px solid #00f5ff !important;
+    border-radius: 12px !important;
+    color: #e5e7eb !important;
+}
+
+.stSuccess { border-left-color: #00ff9d !important; }
+.stWarning { border-left-color: #eab308 !important; }
+.stError { border-left-color: #ef4444 !important; }
+
+.stDataFrame {
+    background: rgba(26, 26, 46, 0.5) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 245, 255, 0.1) !important;
+    overflow: hidden !important;
+}
+.stDataFrame table {
+    background: transparent !important;
+    color: #d1d5db !important;
+}
+.stDataFrame thead tr th {
+    background: rgba(0, 245, 255, 0.08) !important;
+    color: #00f5ff !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2) !important;
+}
+.stDataFrame tbody tr:hover {
+    background: rgba(0, 245, 255, 0.05) !important;
+}
+
+a {
+    color: #a855f7 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+a:hover {
+    color: #00f5ff !important;
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.3) !important;
+}
+
+.stCodeBlock, .stMarkdown pre {
+    background: rgba(10, 10, 18, 0.8) !important;
+    border: 1px solid rgba(0, 245, 255, 0.15) !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #a855f7 !important;
+}
+
+footer { visibility: hidden !important; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #1a1a2e; }
+::-webkit-scrollbar-thumb { background: #00f5ff44; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #00f5ff88; }
+
+.stSelectbox label { color: #9ca3af !important; font-weight: 500 !important; }
+
+.stTextArea textarea {
+    background: rgba(10, 10, 18, 0.7) !important;
+    border: 1px solid rgba(0, 245, 255, 0.2) !important;
+    color: #e5e7eb !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.85rem !important;
+}
+
+.stInfo {
+    background: rgba(0, 245, 255, 0.06) !important;
+    border-left: 4px solid #00f5ff !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+}
+
+@media (max-width: 768px) {
+    .stTabs [data-baseweb="tab-list"] {
+        flex-wrap: wrap !important;
+        border-radius: 20px !important;
+        gap: 4px !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        padding: 6px 14px !important;
+        font-size: 0.8rem !important;
+    }
+}
+</style>
+"""
+st.markdown(css_futurista, unsafe_allow_html=True)
 
 # ============================================================
 # 🚀 AUTO-INSTALAÇÃO DO PLAYWRIGHT
@@ -30,11 +285,10 @@ def instalar_playwright_browsers():
         subprocess.run(["playwright", "install-deps"], check=False)
     except Exception:
         pass
-
 instalar_playwright_browsers()
 
 # ============================================================
-# 🔍 ANÁLISE DE SITE (agora com mais redes)
+# 🔍 ANÁLISE DE SITE
 # ============================================================
 def analisar_site(url):
     if not url or url == "Não informado":
@@ -50,7 +304,7 @@ def analisar_site(url):
     return "✅ Site Próprio"
 
 # ============================================================
-# 🦅 MOTOR DE EXTRAÇÃO (scraper)
+# 🦅 MOTOR DE EXTRAÇÃO
 # ============================================================
 def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None):
     leads = []
@@ -65,7 +319,6 @@ def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None
         page.goto(url)
         page.wait_for_timeout(4000)
 
-        barra_lateral = page.locator('//div[@role="feed"]')
         urls_locais = set()
         tentativas_sem_novos = 0
 
@@ -127,35 +380,31 @@ def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None
     return leads
 
 # ============================================================
-# 🥷 API PARA FLUTTER (se chamar com parâmetros)
+# 🥷 API PARA FLUTTER
 # ============================================================
 params = st.query_params
 if "api" in params and "nicho" in params and "cidade" in params:
     nicho_busca = params["nicho"]
     cidade_busca = params["cidade"]
     limite_busca = int(params.get("limite", 10))
-
     resultado_leads = extrair_leads(f"{nicho_busca} em {cidade_busca}", limite_busca)
     st.text(json.dumps({"status": "sucesso", "dados": resultado_leads}, ensure_ascii=False))
     st.stop()
 
 # ============================================================
-# 🖥️ INTERFACE PRINCIPAL (com estilos CSS)
+# 🖥️ INTERFACE PRINCIPAL
 # ============================================================
-st.set_page_config(page_title="Phoenix Leads AI", page_icon="🦅", layout="wide")
-
 if 'leads_salvos' not in st.session_state:
     st.session_state['leads_salvos'] = pd.DataFrame()
 if 'lead_selecionado' not in st.session_state:
     st.session_state['lead_selecionado'] = None
 
-# MENU DE ABAS
 aba1, aba2, aba3 = st.tabs(["🦅 Mineração Phoenix", "🤖 Construtor de Site (Vibe Code)", "💬 Prospectar Cliente"])
 
 # ---- ABA 1: MINERADOR ----
 with aba1:
     st.title("🦅 PHOENIX LEADS AI")
-    st.markdown('<p class="subtitle">Extraia leads do Google Maps com análise de presença digital</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size:1.1rem; color:#9ca3af; margin-top:-0.5rem;">Extraia leads do Google Maps com análise de presença digital</p>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([2, 2, 1])
     with col1:
@@ -183,7 +432,7 @@ with aba1:
         st.write("---")
         st.subheader("🎯 Leads Encontrados")
 
-        # Exibição em cards (mais bonito)
+        # Cards em 3 colunas
         cols = st.columns(3)
         for idx, (_, row) in enumerate(df_exibir.iterrows()):
             with cols[idx % 3]:
@@ -277,7 +526,6 @@ with aba3:
         if len(numero_limpo) > 0 and not numero_limpo.startswith("55"):
             numero_limpo = "55" + numero_limpo
 
-        # Gatilho personalizado
         if "📸 Instagram" in lead['status_site']:
             gatilho_venda = "Notei que vocês usam o perfil do Instagram como página principal. O Instagram é ótimo para conteúdo, mas vocês acabam perdendo muitos clientes que buscam direto no Google e querem ver um site rápido, com valores ou botões de agendamento diretos."
         elif "❌ Sem Site" in lead['status_site']:
