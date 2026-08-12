@@ -6,6 +6,7 @@ import time
 import urllib.parse
 import pandas as pd
 from playwright.sync_api import sync_playwright
+from io import StringIO
 
 # ============================================================
 # 🚀 AUTO-INSTALAÇÃO DO PLAYWRIGHT
@@ -112,6 +113,47 @@ def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None
     return leads
 
 # ============================================================
+# 🛒 HELPERS DO CARRINHO
+# ============================================================
+def _chave_lead(lead):
+    """Chave única baseada no link do Google Maps (mais estável)."""
+    return lead.get("link") or f"{lead.get('empresa', '')}|{lead.get('telefone', '')}"
+
+def adicionar_ao_carrinho(lead):
+    chave = _chave_lead(lead)
+    chaves_existentes = {_chave_lead(l) for l in st.session_state["carrinho_leads"]}
+    if chave not in chaves_existentes:
+        item = {
+            "empresa": lead.get("empresa", ""),
+            "telefone": lead.get("telefone", ""),
+            "status_site": lead.get("status_site", ""),
+            "link_coletado": lead.get("link_coletado", ""),
+            "link": lead.get("link", ""),
+        }
+        st.session_state["carrinho_leads"].append(item)
+        return True
+    return False
+
+def remover_do_carrinho(chave):
+    st.session_state["carrinho_leads"] = [
+        l for l in st.session_state["carrinho_leads"] if _chave_lead(l) != chave
+    ]
+
+def lead_esta_no_carrinho(lead):
+    chave = _chave_lead(lead)
+    return any(_chave_lead(l) == chave for l in st.session_state["carrinho_leads"])
+
+def exportar_carrinho_csv():
+    if not st.session_state["carrinho_leads"]:
+        return None
+    df = pd.DataFrame(st.session_state["carrinho_leads"])
+    colunas = ["empresa", "telefone", "status_site", "link_coletado", "link"]
+    df = df[[c for c in colunas if c in df.columns]]
+    buffer = StringIO()
+    df.to_csv(buffer, index=False, encoding="utf-8-sig")
+    return buffer.getvalue()
+
+# ============================================================
 # 🥷 API PARA FLUTTER
 # ============================================================
 params = st.query_params
@@ -126,10 +168,12 @@ if "api" in params and "nicho" in params and "cidade" in params:
 # ============================================================
 # 🖥️ INTERFACE PRINCIPAL
 # ============================================================
-if 'leads_salvos' not in st.session_state:
-    st.session_state['leads_salvos'] = pd.DataFrame()
-if 'lead_selecionado' not in st.session_state:
-    st.session_state['lead_selecionado'] = None
+if "leads_salvos" not in st.session_state:
+    st.session_state["leads_salvos"] = pd.DataFrame()
+if "lead_selecionado" not in st.session_state:
+    st.session_state["lead_selecionado"] = None
+if "carrinho_leads" not in st.session_state:
+    st.session_state["carrinho_leads"] = []  # lista de dicts — persiste entre buscas
 
 aba1, aba2, aba3 = st.tabs(["🦅 Mineração Phoenix", "🤖 Construtor de Site (Vibe Code)", "💬 Prospectar Cliente"])
 
@@ -137,6 +181,46 @@ aba1, aba2, aba3 = st.tabs(["🦅 Mineração Phoenix", "🤖 Construtor de Site
 with aba1:
     st.title("🦅 PHOENIX LEADS AI")
     st.markdown('<p style="font-size:1.1rem; color:#9ca3af; margin-top:-0.5rem;">Extraia leads do Google Maps com análise de presença digital</p>', unsafe_allow_html=True)
+
+    # ---- CARRINHO (sempre visível no topo da aba) ----
+    qtd_carrinho = len(st.session_state["carrinho_leads"])
+    with st.expander(f"🛒 Carrinho de Leads ({qtd_carrinho})", expanded=qtd_carrinho > 0):
+        if qtd_carrinho == 0:
+            st.caption("Nenhum lead no carrinho ainda. Adicione leads dos resultados abaixo.")
+        else:
+            st.markdown(f"**{qtd_carrinho} lead(s) guardado(s)** — eles permanecem mesmo se você fizer outra mineração.")
+
+            for i, item in enumerate(st.session_state["carrinho_leads"]):
+                c_nome, c_tel, c_status, c_btn = st.columns([3, 2, 2, 1])
+                with c_nome:
+                    st.write(f"**{item['empresa']}**")
+                with c_tel:
+                    st.write(item["telefone"])
+                with c_status:
+                    st.write(item["status_site"])
+                with c_btn:
+                    if st.button("🗑️", key=f"rm_cart_{i}", help="Remover do carrinho"):
+                        remover_do_carrinho(_chave_lead(item))
+                        st.rerun()
+
+            st.write("---")
+            col_exp, col_limpar = st.columns([2, 1])
+            with col_exp:
+                csv_data = exportar_carrinho_csv()
+                if csv_data:
+                    st.download_button(
+                        label="📥 Exportar Carrinho em CSV",
+                        data=csv_data,
+                        file_name=f"phoenix_leads_carrinho_{qtd_carrinho}.csv",
+                        mime="text/csv",
+                        use_container_width=True,
+                    )
+            with col_limpar:
+                if st.button("🧹 Limpar Carrinho", use_container_width=True):
+                    st.session_state["carrinho_leads"] = []
+                    st.rerun()
+
+    st.write("---")
 
     col1, col2, col3 = st.columns([2, 2, 1])
     with col1:
@@ -154,28 +238,55 @@ with aba1:
         status_t.text("✅ Mineração concluída com sucesso!")
 
         if lista_dados:
-            st.session_state['leads_salvos'] = pd.DataFrame(lista_dados)
-            st.success(f"🎯 {len(lista_dados)} leads encontrados e salvos!")
+            st.session_state["leads_salvos"] = pd.DataFrame(lista_dados)
+            st.success(f"🎯 {len(lista_dados)} leads encontrados! (O carrinho não foi alterado)")
         else:
             st.warning("Nenhum lead encontrado. Tente ajustar os termos.")
 
-    if not st.session_state['leads_salvos'].empty:
-        df_exibir = st.session_state['leads_salvos']
+    if not st.session_state["leads_salvos"].empty:
+        df_exibir = st.session_state["leads_salvos"]
         st.write("---")
         st.subheader("🎯 Leads Encontrados")
 
-        # Cards em 3 colunas
+        # Botão rápido: adicionar todos que ainda não estão no carrinho
+        nao_no_carrinho = [
+            row.to_dict() for _, row in df_exibir.iterrows()
+            if not lead_esta_no_carrinho(row.to_dict())
+        ]
+        if nao_no_carrinho:
+            if st.button(f"➕ Adicionar todos os {len(nao_no_carrinho)} leads desta busca ao carrinho", use_container_width=True):
+                adicionados = 0
+                for lead in nao_no_carrinho:
+                    if adicionar_ao_carrinho(lead):
+                        adicionados += 1
+                st.success(f"✅ {adicionados} lead(s) adicionados ao carrinho!")
+                st.rerun()
+
+        # Cards em 3 colunas + botão de adicionar/remover
         cols = st.columns(3)
         for idx, (_, row) in enumerate(df_exibir.iterrows()):
+            lead_dict = row.to_dict()
+            no_carrinho = lead_esta_no_carrinho(lead_dict)
             with cols[idx % 3]:
                 st.markdown(f"""
                 <div class="card">
                     <h4>{row['empresa']}</h4>
                     <p><strong>📞 Telefone:</strong> {row['telefone']}</p>
                     <p><strong>🌐 Status:</strong> {row['status_site']}</p>
-                    <p><small>🔗 {row['link_coletado'][:40]}...</small></p>
+                    <p><small>🔗 {str(row['link_coletado'])[:40]}...</small></p>
                 </div>
                 """, unsafe_allow_html=True)
+
+                if no_carrinho:
+                    st.caption("✅ Já está no carrinho")
+                    if st.button("🗑️ Remover", key=f"rm_card_{idx}", use_container_width=True):
+                        remover_do_carrinho(_chave_lead(lead_dict))
+                        st.rerun()
+                else:
+                    if st.button("➕ Adicionar ao Carrinho", key=f"add_card_{idx}", use_container_width=True):
+                        if adicionar_ao_carrinho(lead_dict):
+                            st.success("Adicionado!")
+                            st.rerun()
 
         st.write("---")
         st.markdown("### 🔍 Seleção de Lead & Detalhes")
@@ -199,14 +310,24 @@ with aba1:
         st.markdown(f"**🔗 Acesso Rápido ao Google Maps:** [Clique para abrir o perfil da empresa]({info_lead['link']})")
         st.caption(f"**Link de Origem Cadastrado:** {info_lead['link_coletado']}")
 
+        # Também pode adicionar o lead detalhado ao carrinho
+        lead_dict_detalhe = info_lead.to_dict() if hasattr(info_lead, "to_dict") else dict(info_lead)
+        if lead_esta_no_carrinho(lead_dict_detalhe):
+            st.caption("✅ Este lead já está no carrinho")
+        else:
+            if st.button("➕ Adicionar este lead ao Carrinho", key="add_detalhe", use_container_width=True):
+                if adicionar_ao_carrinho(lead_dict_detalhe):
+                    st.success("Adicionado ao carrinho!")
+                    st.rerun()
+
         if st.button("🚀 Obter Resumo e Gerar Site", use_container_width=True):
-            st.session_state['lead_selecionado'] = info_lead
+            st.session_state["lead_selecionado"] = lead_dict_detalhe
             st.success("✅ Dados filtrados! Vá para a aba 'Construtor de Site'.")
 
 # ---- ABA 2: CRIADOR DE SITE ----
 with aba2:
     st.title("🤖 PHOENIX SITE BUILDER (VIBE CODE)")
-    lead = st.session_state['lead_selecionado']
+    lead = st.session_state["lead_selecionado"]
 
     if lead is None:
         st.info("Nenhum lead selecionado ainda. Vá na aba 'Mineração Phoenix' e clique em 'Obter Resumo e Gerar Site'.")
@@ -247,7 +368,7 @@ with aba2:
 # ---- ABA 3: PROSPECTAR ----
 with aba3:
     st.title("💬 PROSPECÇÃO ATIVA VIA WHATSAPP")
-    lead = st.session_state['lead_selecionado']
+    lead = st.session_state["lead_selecionado"]
 
     if lead is None:
         st.info("Nenhum lead selecionado. Escolha um cliente na primeira aba para habilitar o disparador.")
