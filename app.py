@@ -1,6 +1,5 @@
 import streamlit as st
 import subprocess
-import os
 import json
 import time
 import urllib.parse
@@ -21,20 +20,206 @@ def instalar_playwright_browsers():
 instalar_playwright_browsers()
 
 # ============================================================
+# 🎨 VISUAL (estilo NEXUS / dark + cyan)
+# ============================================================
+st.set_page_config(
+    page_title="PHOENIX LEADS AI",
+    page_icon="🦅",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+html, body, [class*="css"] {
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Fundo */
+.stApp {
+  background: #06080f !important;
+}
+.stApp::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6, 182, 212, 0.07), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(14, 165, 233, 0.04), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Esconde chrome padrão */
+#MainMenu, footer, header { visibility: hidden; }
+div[data-testid="stToolbar"] { display: none; }
+
+/* Texto */
+h1, h2, h3, h4, p, span, label, .stMarkdown {
+  color: #e2e8f0 !important;
+}
+.stCaption, small { color: #64748b !important; }
+
+/* Inputs */
+.stTextInput input, .stNumberInput input, .stSelectbox > div > div {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 1px solid rgba(51, 65, 85, 0.7) !important;
+  color: #e2e8f0 !important;
+  border-radius: 10px !important;
+}
+.stTextInput input:focus, .stNumberInput input:focus {
+  border-color: rgba(34, 211, 238, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08) !important;
+}
+
+/* Botões primários */
+.stButton > button {
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
+  color: #ecfeff !important;
+  border: 1px solid rgba(34, 211, 238, 0.3) !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 12px rgba(6, 182, 212, 0.18) !important;
+  transition: all 0.2s ease !important;
+}
+.stButton > button:hover {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.28) !important;
+  transform: translateY(-1px);
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 4px;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+}
+.stTabs [data-baseweb="tab"] {
+  color: #64748b !important;
+  background: transparent !important;
+}
+.stTabs [aria-selected="true"] {
+  color: #22d3ee !important;
+  border-bottom: 2px solid #22d3ee !important;
+}
+
+/* Expander / cards */
+.streamlit-expanderHeader {
+  background: rgba(12, 18, 32, 0.8) !important;
+  border: 1px solid rgba(30, 41, 59, 0.8) !important;
+  border-radius: 12px !important;
+  color: #e2e8f0 !important;
+}
+div[data-testid="stExpander"] {
+  background: rgba(12, 18, 32, 0.55) !important;
+  border: 1px solid rgba(30, 41, 59, 0.7) !important;
+  border-radius: 14px !important;
+}
+
+/* Info boxes */
+div[data-testid="stAlert"] {
+  background: rgba(12, 18, 32, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+  border-radius: 12px !important;
+}
+
+/* Cards de lead */
+.lead-card {
+  background: rgba(12, 18, 32, 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.85);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.35rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.lead-card:hover {
+  border-color: rgba(34, 211, 238, 0.28);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+}
+.lead-card h4 {
+  margin: 0 0 0.45rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f1f5f9 !important;
+}
+.lead-card p {
+  margin: 0.2rem 0;
+  font-size: 0.82rem;
+  color: #94a3b8 !important;
+}
+.badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.18rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.35rem;
+}
+.badge-ok { background: rgba(34,211,238,0.12); color: #22d3ee; border: 1px solid rgba(34,211,238,0.22); }
+.badge-warn { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.22); }
+.badge-bad { background: rgba(251,113,133,0.12); color: #fb7185; border: 1px solid rgba(251,113,133,0.22); }
+
+/* Progress */
+.stProgress > div > div {
+  background: linear-gradient(90deg, #0891b2, #22d3ee) !important;
+}
+
+/* Download button */
+.stDownloadButton > button {
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%) !important;
+  color: #ecfeff !important;
+  border: 1px solid rgba(34, 211, 238, 0.3) !important;
+  border-radius: 10px !important;
+}
+
+/* Título */
+.phoenix-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f8fafc !important;
+  margin-bottom: 0.15rem;
+}
+.phoenix-sub {
+  font-size: 0.95rem;
+  color: #94a3b8 !important;
+  font-weight: 300;
+  margin-bottom: 1.25rem;
+}
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ============================================================
 # 🔍 ANÁLISE DE SITE
 # ============================================================
 def analisar_site(url):
     if not url or url == "Não informado":
         return "❌ Sem Site"
-    url_lower = url.lower()
-    if "instagram.com" in url_lower: return "📸 Instagram"
-    if "facebook.com" in url_lower: return "👥 Facebook"
-    if "youtube.com" in url_lower: return "▶️ YouTube"
-    if "tiktok.com" in url_lower: return "🎵 TikTok"
-    if "linkedin.com" in url_lower: return "💼 LinkedIn"
-    if "linktr.ee" in url_lower or "biolinky" in url_lower: return "🔗 Linktree/Bio"
-    if "wa.me" in url_lower or "api.whatsapp" in url_lower: return "💬 WhatsApp"
+    u = url.lower()
+    if "instagram.com" in u: return "📸 Instagram"
+    if "facebook.com" in u: return "👥 Facebook"
+    if "youtube.com" in u: return "▶️ YouTube"
+    if "tiktok.com" in u: return "🎵 TikTok"
+    if "linkedin.com" in u: return "💼 LinkedIn"
+    if "linktr.ee" in u or "biolinky" in u: return "🔗 Linktree/Bio"
+    if "wa.me" in u or "api.whatsapp" in u: return "💬 WhatsApp"
     return "✅ Site Próprio"
+
+def badge_class(status):
+    if not status: return "badge-warn"
+    if "✅" in status: return "badge-ok"
+    if "❌" in status or "Sem Site" in status: return "badge-bad"
+    return "badge-warn"
 
 # ============================================================
 # 🦅 MOTOR DE EXTRAÇÃO
@@ -86,25 +271,28 @@ def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None
                 if status_texto:
                     status_texto.text(f"🎯 Extraindo dados de: {nome}")
                 if barra_progresso:
-                    barra_progresso.progress((i + 1) / len(urls_locais))
+                    barra_progresso.progress((i + 1) / max(len(urls_locais), 1))
 
                 site_coletado = "Não informado"
                 links = page.locator('//a[@data-item-id="authority"]').all()
                 if links:
-                    site_coletado = links[0].get_attribute('href')
+                    site_coletado = links[0].get_attribute('href') or "Não informado"
 
                 botoes = page.locator('//button[contains(@data-item-id, "phone:tel:")]').all()
-                telefone = botoes[0].get_attribute('data-item-id').replace('phone:tel:', '').strip() if botoes else "Não informado"
+                telefone = (
+                    botoes[0].get_attribute('data-item-id').replace('phone:tel:', '').strip()
+                    if botoes else "Não informado"
+                )
 
                 status_site = analisar_site(site_coletado)
 
                 leads.append({
-                    "id": i+1,
+                    "id": i + 1,
                     "empresa": nome,
                     "telefone": telefone,
                     "status_site": status_site,
                     "link_coletado": site_coletado,
-                    "link": url_local
+                    "link": url_local,
                 })
             except Exception:
                 continue
@@ -113,296 +301,276 @@ def extrair_leads(busca, max_resultados, status_texto=None, barra_progresso=None
     return leads
 
 # ============================================================
-# 🛒 HELPERS DO CARRINHO
+# ⭐ LISTA DE INTERESSE
 # ============================================================
 def _chave_lead(lead):
-    """Chave única baseada no link do Google Maps (mais estável)."""
     return lead.get("link") or f"{lead.get('empresa', '')}|{lead.get('telefone', '')}"
 
-def adicionar_ao_carrinho(lead):
+def adicionar_a_lista(lead):
     chave = _chave_lead(lead)
-    chaves_existentes = {_chave_lead(l) for l in st.session_state["carrinho_leads"]}
-    if chave not in chaves_existentes:
-        item = {
+    existentes = {_chave_lead(l) for l in st.session_state["lista_interesse"]}
+    if chave not in existentes:
+        st.session_state["lista_interesse"].append({
             "empresa": lead.get("empresa", ""),
             "telefone": lead.get("telefone", ""),
             "status_site": lead.get("status_site", ""),
             "link_coletado": lead.get("link_coletado", ""),
             "link": lead.get("link", ""),
-        }
-        st.session_state["carrinho_leads"].append(item)
+        })
         return True
     return False
 
-def remover_do_carrinho(chave):
-    st.session_state["carrinho_leads"] = [
-        l for l in st.session_state["carrinho_leads"] if _chave_lead(l) != chave
+def remover_da_lista(chave):
+    st.session_state["lista_interesse"] = [
+        l for l in st.session_state["lista_interesse"] if _chave_lead(l) != chave
     ]
 
-def lead_esta_no_carrinho(lead):
+def lead_esta_na_lista(lead):
     chave = _chave_lead(lead)
-    return any(_chave_lead(l) == chave for l in st.session_state["carrinho_leads"])
+    return any(_chave_lead(l) == chave for l in st.session_state["lista_interesse"])
 
-def exportar_carrinho_csv():
-    if not st.session_state["carrinho_leads"]:
+def exportar_lista_csv():
+    if not st.session_state["lista_interesse"]:
         return None
-    df = pd.DataFrame(st.session_state["carrinho_leads"])
+    df = pd.DataFrame(st.session_state["lista_interesse"])
     colunas = ["empresa", "telefone", "status_site", "link_coletado", "link"]
     df = df[[c for c in colunas if c in df.columns]]
-    buffer = StringIO()
-    df.to_csv(buffer, index=False, encoding="utf-8-sig")
-    return buffer.getvalue()
+    buf = StringIO()
+    df.to_csv(buf, index=False, encoding="utf-8-sig")
+    return buf.getvalue()
 
 # ============================================================
-# 🥷 API PARA FLUTTER
+# 🥷 API FLUTTER
 # ============================================================
 params = st.query_params
 if "api" in params and "nicho" in params and "cidade" in params:
-    nicho_busca = params["nicho"]
-    cidade_busca = params["cidade"]
-    limite_busca = int(params.get("limite", 10))
-    resultado_leads = extrair_leads(f"{nicho_busca} em {cidade_busca}", limite_busca)
-    st.text(json.dumps({"status": "sucesso", "dados": resultado_leads}, ensure_ascii=False))
+    resultado = extrair_leads(
+        f"{params['nicho']} em {params['cidade']}",
+        int(params.get("limite", 10)),
+    )
+    st.text(json.dumps({"status": "sucesso", "dados": resultado}, ensure_ascii=False))
     st.stop()
 
 # ============================================================
-# 🖥️ INTERFACE PRINCIPAL
+# 🖥️ ESTADO
 # ============================================================
 if "leads_salvos" not in st.session_state:
     st.session_state["leads_salvos"] = pd.DataFrame()
 if "lead_selecionado" not in st.session_state:
     st.session_state["lead_selecionado"] = None
-if "carrinho_leads" not in st.session_state:
-    st.session_state["carrinho_leads"] = []  # lista de dicts — persiste entre buscas
+if "lista_interesse" not in st.session_state:
+    # migra carrinho antigo se existir
+    if "carrinho_leads" in st.session_state and st.session_state["carrinho_leads"]:
+        st.session_state["lista_interesse"] = st.session_state["carrinho_leads"]
+    else:
+        st.session_state["lista_interesse"] = []
 
-aba1, aba2, aba3 = st.tabs(["🦅 Mineração Phoenix", "🤖 Construtor de Site (Vibe Code)", "💬 Prospectar Cliente"])
+# ============================================================
+# 🖥️ UI
+# ============================================================
+aba1, aba2, aba3 = st.tabs([
+    "🦅 Mineração Phoenix",
+    "🤖 Construtor de Site",
+    "💬 Prospectar Cliente",
+])
 
-# ---- ABA 1: MINERADOR ----
+# ---- ABA 1 ----
 with aba1:
-    st.title("🦅 PHOENIX LEADS AI")
-    st.markdown('<p style="font-size:1.1rem; color:#9ca3af; margin-top:-0.5rem;">Extraia leads do Google Maps com análise de presença digital</p>', unsafe_allow_html=True)
+    st.markdown('<p class="phoenix-title">🦅 PHOENIX LEADS AI</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="phoenix-sub">Extraia leads do Google Maps com análise de presença digital</p>',
+        unsafe_allow_html=True,
+    )
 
-    # ---- CARRINHO (sempre visível no topo da aba) ----
-    qtd_carrinho = len(st.session_state["carrinho_leads"])
-    with st.expander(f"🛒 Carrinho de Leads ({qtd_carrinho})", expanded=qtd_carrinho > 0):
-        if qtd_carrinho == 0:
-            st.caption("Nenhum lead no carrinho ainda. Adicione leads dos resultados abaixo.")
+    qtd = len(st.session_state["lista_interesse"])
+    with st.expander(f"⭐ Lista de Interesse ({qtd})", expanded=qtd > 0):
+        if qtd == 0:
+            st.caption("Nenhum lead na lista ainda. Adicione a partir dos resultados abaixo.")
         else:
-            st.markdown(f"**{qtd_carrinho} lead(s) guardado(s)** — eles permanecem mesmo se você fizer outra mineração.")
-
-            for i, item in enumerate(st.session_state["carrinho_leads"]):
-                c_nome, c_tel, c_status, c_btn = st.columns([3, 2, 2, 1])
-                with c_nome:
+            st.markdown(f"**{qtd} lead(s)** — permanecem mesmo após nova mineração.")
+            for i, item in enumerate(st.session_state["lista_interesse"]):
+                c1, c2, c3, c4 = st.columns([3, 2, 2, 1])
+                with c1:
                     st.write(f"**{item['empresa']}**")
-                with c_tel:
+                with c2:
                     st.write(item["telefone"])
-                with c_status:
+                with c3:
                     st.write(item["status_site"])
-                with c_btn:
-                    if st.button("🗑️", key=f"rm_cart_{i}", help="Remover do carrinho"):
-                        remover_do_carrinho(_chave_lead(item))
+                with c4:
+                    if st.button("🗑️", key=f"rm_lista_{i}", help="Remover"):
+                        remover_da_lista(_chave_lead(item))
                         st.rerun()
 
-            st.write("---")
-            col_exp, col_limpar = st.columns([2, 1])
-            with col_exp:
-                csv_data = exportar_carrinho_csv()
+            st.write("")
+            col_a, col_b = st.columns([2, 1])
+            with col_a:
+                csv_data = exportar_lista_csv()
                 if csv_data:
                     st.download_button(
-                        label="📥 Exportar Carrinho em CSV",
+                        "📥 Exportar Lista em CSV",
                         data=csv_data,
-                        file_name=f"phoenix_leads_carrinho_{qtd_carrinho}.csv",
+                        file_name=f"phoenix_lista_interesse_{qtd}.csv",
                         mime="text/csv",
                         use_container_width=True,
                     )
-            with col_limpar:
-                if st.button("🧹 Limpar Carrinho", use_container_width=True):
-                    st.session_state["carrinho_leads"] = []
+            with col_b:
+                if st.button("🧹 Limpar Lista", use_container_width=True):
+                    st.session_state["lista_interesse"] = []
                     st.rerun()
 
-    st.write("---")
-
+    st.write("")
     col1, col2, col3 = st.columns([2, 2, 1])
     with col1:
-        termo = st.text_input("🔎 Nicho / Profissão:", "Barbearia")
+        termo = st.text_input("🔎 Nicho / Profissão", "Barbearia")
     with col2:
-        cidade = st.text_input("📍 Cidade:", "São Paulo")
+        cidade = st.text_input("📍 Cidade", "São Paulo")
     with col3:
-        limite = st.number_input("📊 Limite:", min_value=5, max_value=100, value=10)
+        limite = st.number_input("📊 Limite", min_value=5, max_value=100, value=10)
 
     if st.button("🚀 Minerar Agora", use_container_width=True):
-        barra_p = st.progress(0)
-        status_t = st.empty()
-
-        lista_dados = extrair_leads(f"{termo} em {cidade}", limite, status_texto=status_t, barra_progresso=barra_p)
-        status_t.text("✅ Mineração concluída com sucesso!")
-
-        if lista_dados:
-            st.session_state["leads_salvos"] = pd.DataFrame(lista_dados)
-            st.success(f"🎯 {len(lista_dados)} leads encontrados! (O carrinho não foi alterado)")
+        barra = st.progress(0)
+        status = st.empty()
+        dados = extrair_leads(f"{termo} em {cidade}", limite, status_texto=status, barra_progresso=barra)
+        status.text("✅ Mineração concluída!")
+        if dados:
+            st.session_state["leads_salvos"] = pd.DataFrame(dados)
+            st.success(f"🎯 {len(dados)} leads encontrados! (Lista de Interesse intacta)")
         else:
-            st.warning("Nenhum lead encontrado. Tente ajustar os termos.")
+            st.warning("Nenhum lead encontrado. Ajuste os termos.")
 
     if not st.session_state["leads_salvos"].empty:
-        df_exibir = st.session_state["leads_salvos"]
+        df = st.session_state["leads_salvos"]
         st.write("---")
-        st.subheader("🎯 Leads Encontrados")
+        st.subheader("🎯 Leads encontrados")
 
-        # Botão rápido: adicionar todos que ainda não estão no carrinho
-        nao_no_carrinho = [
-            row.to_dict() for _, row in df_exibir.iterrows()
-            if not lead_esta_no_carrinho(row.to_dict())
-        ]
-        if nao_no_carrinho:
-            if st.button(f"➕ Adicionar todos os {len(nao_no_carrinho)} leads desta busca ao carrinho", use_container_width=True):
-                adicionados = 0
-                for lead in nao_no_carrinho:
-                    if adicionar_ao_carrinho(lead):
-                        adicionados += 1
-                st.success(f"✅ {adicionados} lead(s) adicionados ao carrinho!")
+        faltando = [r.to_dict() for _, r in df.iterrows() if not lead_esta_na_lista(r.to_dict())]
+        if faltando:
+            if st.button(
+                f"➕ Adicionar todos os {len(faltando)} à Lista de Interesse",
+                use_container_width=True,
+            ):
+                n = sum(1 for l in faltando if adicionar_a_lista(l))
+                st.success(f"✅ {n} lead(s) adicionados!")
                 st.rerun()
 
-        # Cards em 3 colunas + botão de adicionar/remover
         cols = st.columns(3)
-        for idx, (_, row) in enumerate(df_exibir.iterrows()):
-            lead_dict = row.to_dict()
-            no_carrinho = lead_esta_no_carrinho(lead_dict)
+        for idx, (_, row) in enumerate(df.iterrows()):
+            lead = row.to_dict()
+            na = lead_esta_na_lista(lead)
+            bc = badge_class(lead.get("status_site", ""))
             with cols[idx % 3]:
                 st.markdown(f"""
-                <div class="card">
-                    <h4>{row['empresa']}</h4>
-                    <p><strong>📞 Telefone:</strong> {row['telefone']}</p>
-                    <p><strong>🌐 Status:</strong> {row['status_site']}</p>
-                    <p><small>🔗 {str(row['link_coletado'])[:40]}...</small></p>
+                <div class="lead-card">
+                  <h4>{lead['empresa']}</h4>
+                  <p>📞 {lead['telefone']}</p>
+                  <span class="badge {bc}">{lead['status_site']}</span>
+                  <p style="margin-top:0.5rem;font-size:0.75rem;opacity:0.7;">🔗 {str(lead.get('link_coletado',''))[:38]}…</p>
                 </div>
                 """, unsafe_allow_html=True)
 
-                if no_carrinho:
-                    st.caption("✅ Já está no carrinho")
+                if na:
+                    st.caption("✅ Na Lista de Interesse")
                     if st.button("🗑️ Remover", key=f"rm_card_{idx}", use_container_width=True):
-                        remover_do_carrinho(_chave_lead(lead_dict))
+                        remover_da_lista(_chave_lead(lead))
                         st.rerun()
                 else:
-                    if st.button("➕ Adicionar ao Carrinho", key=f"add_card_{idx}", use_container_width=True):
-                        if adicionar_ao_carrinho(lead_dict):
-                            st.success("Adicionado!")
+                    if st.button("➕ Lista de Interesse", key=f"add_card_{idx}", use_container_width=True):
+                        if adicionar_a_lista(lead):
                             st.rerun()
 
         st.write("---")
-        st.markdown("### 🔍 Seleção de Lead & Detalhes")
-        opcoes_leads = {f"[{row['status_site']}] - {row['empresa']}": row for _, row in df_exibir.iterrows()}
-        lead_chosen = st.selectbox("Clique no lead para abrir as informações:", list(opcoes_leads.keys()))
-
-        info_lead = opcoes_leads[lead_chosen]
-
-        st.write("---")
-        st.markdown(f"#### 📋 Ficha Completa do Lead no Google Maps")
+        st.markdown("### 🔍 Detalhes do lead")
+        opcoes = {f"[{r['status_site']}] — {r['empresa']}": r for _, r in df.iterrows()}
+        escolhido = st.selectbox("Selecione um lead", list(opcoes.keys()))
+        info = opcoes[escolhido]
+        lead_dict = info.to_dict() if hasattr(info, "to_dict") else dict(info)
 
         c1, c2, c3 = st.columns(3)
         with c1:
-            st.info(f"**🏢 Nome do Negócio:**\n{info_lead['empresa']}")
+            st.info(f"**🏢 Empresa**\n\n{lead_dict['empresa']}")
         with c2:
-            st.info(f"**📱 Telefone / WhatsApp:**\n{info_lead['telefone']}")
+            st.info(f"**📱 Telefone**\n\n{lead_dict['telefone']}")
         with c3:
-            st.info(f"**📊 Diagnóstico de Página:**\n{info_lead['status_site']}")
+            st.info(f"**🌐 Status**\n\n{lead_dict['status_site']}")
 
-        st.write("---")
-        st.markdown(f"**🔗 Acesso Rápido ao Google Maps:** [Clique para abrir o perfil da empresa]({info_lead['link']})")
-        st.caption(f"**Link de Origem Cadastrado:** {info_lead['link_coletado']}")
+        st.markdown(f"[Abrir no Google Maps]({lead_dict['link']})")
+        st.caption(f"Link cadastrado: {lead_dict['link_coletado']}")
 
-        # Também pode adicionar o lead detalhado ao carrinho
-        lead_dict_detalhe = info_lead.to_dict() if hasattr(info_lead, "to_dict") else dict(info_lead)
-        if lead_esta_no_carrinho(lead_dict_detalhe):
-            st.caption("✅ Este lead já está no carrinho")
+        if lead_esta_na_lista(lead_dict):
+            st.caption("✅ Já está na Lista de Interesse")
         else:
-            if st.button("➕ Adicionar este lead ao Carrinho", key="add_detalhe", use_container_width=True):
-                if adicionar_ao_carrinho(lead_dict_detalhe):
-                    st.success("Adicionado ao carrinho!")
+            if st.button("➕ Adicionar à Lista de Interesse", key="add_detalhe", use_container_width=True):
+                if adicionar_a_lista(lead_dict):
                     st.rerun()
 
-        if st.button("🚀 Obter Resumo e Gerar Site", use_container_width=True):
-            st.session_state["lead_selecionado"] = lead_dict_detalhe
-            st.success("✅ Dados filtrados! Vá para a aba 'Construtor de Site'.")
+        if st.button("🚀 Usar no Construtor / WhatsApp", use_container_width=True):
+            st.session_state["lead_selecionado"] = lead_dict
+            st.success("Lead ativo. Vá nas abas Construtor ou Prospectar.")
 
-# ---- ABA 2: CRIADOR DE SITE ----
+# ---- ABA 2 ----
 with aba2:
-    st.title("🤖 PHOENIX SITE BUILDER (VIBE CODE)")
+    st.markdown('<p class="phoenix-title">🤖 Construtor de Site</p>', unsafe_allow_html=True)
     lead = st.session_state["lead_selecionado"]
-
     if lead is None:
-        st.info("Nenhum lead selecionado ainda. Vá na aba 'Mineração Phoenix' e clique em 'Obter Resumo e Gerar Site'.")
+        st.info("Selecione um lead na Mineração e clique em **Usar no Construtor / WhatsApp**.")
     else:
-        st.markdown(f"### 📋 Dados do Lead Ativo:")
-        st.success(f"**Empresa:** {lead['empresa']} | **Status Atual:** {lead['status_site']}")
-
-        with st.spinner("Montando o prompt cirúrgico para o Vibe Code..."):
-            time.sleep(0.5)
-
-            st.markdown("## 📜 1. Resumo Estratégico do Lead (IA)")
-            argumento_ia = (f"não possui nenhuma página profissional na web, dependendo apenas do link '{lead['link_coletado']}'"
-                            if "✅" not in lead['status_site']
-                            else "possui um site, mas ele pode ser otimizado para conversão direta")
-
-            resumo_ia = f"""
-            * **Diagnóstico Digital:** A empresa **{lead['empresa']}** {argumento_ia}. Isso afasta os clientes que buscam um serviço sério ou imediato no Google desktop/mobile.
-            * **Ponto de Conversão Crítico:** Criar um ambiente focado em transformar a busca local em agendamento rápido via {lead['telefone']}.
-            """
-            st.markdown(resumo_ia)
-            st.write("---")
-
-            st.markdown("## 💻 2. Prompt Estruturado para o Vibe Code")
-            prompt_vibe_code = f"""Escreva um prompt que eu possa usar no software Vibe Code para criar um site atraente para uma empresa chamada {lead['empresa']}, que atualmente está classificada como {lead['status_site']} (Link cadastrado: {lead['link_coletado']}). Com esta informação:
-
-[informações do google maps]
-- Nome do Negócio: {lead['empresa']}
-- Telefone/Contato: {lead['telefone']}
-- Situação Web Atual: {lead['status_site']} (Link: {lead['link_coletado']})
-
-[Diretrizes do Site que a IA deve seguir no Vibe Code]:
-1. Crie uma landing page profissional de altíssima conversão, muito superior a perfis de redes sociais comuns ou linktrees.
-2. Monte seções nítidas: Hero Section (Apresentação impactante), Serviços oferecidos, Prova Social/Depoimentos e Rodapé com dados de contato.
-3. Fixe botões flutuantes e de ação direcionando direto para o WhatsApp de atendimento: {lead['telefone']}.
-"""
-            st.code(prompt_vibe_code, language="text")
-
-# ---- ABA 3: PROSPECTAR ----
-with aba3:
-    st.title("💬 PROSPECÇÃO ATIVA VIA WHATSAPP")
-    lead = st.session_state["lead_selecionado"]
-
-    if lead is None:
-        st.info("Nenhum lead selecionado. Escolha um cliente na primeira aba para habilitar o disparador.")
-    else:
-        st.markdown(f"### ⚡ Preparando Abordagem para: **{lead['empresa']}**")
-
-        numero_limpo = "".join(filter(str.isdigit, lead['telefone']))
-        if len(numero_limpo) > 0 and not numero_limpo.startswith("55"):
-            numero_limpo = "55" + numero_limpo
-
-        if "📸 Instagram" in lead['status_site']:
-            gatilho_venda = "Notei que vocês usam o perfil do Instagram como página principal. O Instagram é ótimo para conteúdo, mas vocês acabam perdendo muitos clientes que buscam direto no Google e querem ver um site rápido, com valores ou botões de agendamento diretos."
-        elif "❌ Sem Site" in lead['status_site']:
-            gatilho_venda = "Notei que vocês ainda não têm um site ou página cadastrada para receber os clientes que acham vocês na internet."
-        elif "🔗 Linktree/Bio" in lead['status_site'] or "💬 WhatsApp" in lead['status_site']:
-            gatilho_venda = "Notei que vocês usam apenas um agregador de links/botão direto na página de vocês. Isso limita um pouco a autoridade do negócio para quem busca direto pelo Google."
-        else:
-            gatilho_venda = "Estava analisando a presença digital de vocês no mapa e montei uma proposta de otimização para o site atual de vocês, focado em trazer mais agendamentos."
-
-        copy_whatsapp = f"""Olá, tudo bem? Sou especialista em positioning digital e encontrei o perfil da *{lead['empresa']}* no Google.
-
-{gatilho_venda} Eu montei um protótipo de site exclusivo e moderno, focado em alta conversão e integrado com o WhatsApp de vocês ({lead['telefone']}).
-
-Posso te enviar o link desse layout que desenhei, sem compromisso nenhum, para você dar uma olhada e ver o que acha?"""
-
-        st.markdown("#### 📝 Copy de Abordagem Personalizada:")
-        st.text_area("Texto pronto:", value=copy_whatsapp, height=220)
-
-        texto_url = urllib.parse.quote(copy_whatsapp)
-        link_api_whatsapp = f"https://wa.me/{numero_limpo}?text={texto_url}"
-
-        st.write("---")
+        st.success(f"**{lead['empresa']}** · {lead['status_site']}")
+        tem_site = "✅" in lead.get("status_site", "")
+        arg = (
+            "possui um site, mas pode ser otimizado para conversão"
+            if tem_site
+            else f"não tem página profissional (só '{lead['link_coletado']}')"
+        )
         st.markdown(f"""
-        <a href="{link_api_whatsapp}" target="_blank" class="whatsapp-button">
-            💬 Abrir Conversa e Fechar Cliente no WhatsApp
-        </a>
-        """, unsafe_allow_html=True)
+**Diagnóstico:** A empresa **{lead['empresa']}** {arg}.
+
+**Foco:** transformar busca local em agendamento via **{lead['telefone']}**.
+""")
+        prompt = f"""Escreva um prompt para o Vibe Code criar um site para {lead['empresa']} ({lead['status_site']}, link: {lead['link_coletado']}).
+
+Dados:
+- Nome: {lead['empresa']}
+- Telefone: {lead['telefone']}
+- Situação web: {lead['status_site']}
+
+Diretrizes:
+1. Landing page de alta conversão
+2. Seções: Hero, Serviços, Prova Social, Contato
+3. Botões de ação para WhatsApp: {lead['telefone']}
+"""
+        st.code(prompt, language="text")
+
+# ---- ABA 3 ----
+with aba3:
+    st.markdown('<p class="phoenix-title">💬 Prospecção WhatsApp</p>', unsafe_allow_html=True)
+    lead = st.session_state["lead_selecionado"]
+    if lead is None:
+        st.info("Selecione um lead na Mineração e clique em **Usar no Construtor / WhatsApp**.")
+    else:
+        st.markdown(f"Abordagem para **{lead['empresa']}**")
+        num = "".join(filter(str.isdigit, lead["telefone"]))
+        if num and not num.startswith("55"):
+            num = "55" + num
+
+        status = lead.get("status_site", "")
+        if "Instagram" in status:
+            gatilho = "Notei que vocês usam o Instagram como página principal. Funciona pra conteúdo, mas perde quem busca no Google querendo site rápido com agendamento."
+        elif "Sem Site" in status:
+            gatilho = "Notei que vocês ainda não têm site cadastrado pra quem encontra vocês na internet."
+        elif "Linktree" in status or "WhatsApp" in status:
+            gatilho = "Notei que vocês usam só agregador de links. Isso limita a autoridade pra quem busca no Google."
+        else:
+            gatilho = "Analisei a presença de vocês no mapa e montei uma proposta de site focado em mais agendamentos."
+
+        copy = f"""Olá, tudo bem? Sou especialista em positioning digital e encontrei o perfil da *{lead['empresa']}* no Google.
+
+{gatilho} Montei um protótipo de site moderno, focado em conversão e integrado ao WhatsApp ({lead['telefone']}).
+
+Posso te enviar o link desse layout, sem compromisso, pra você ver o que acha?"""
+
+        st.text_area("Copy pronta", value=copy, height=220)
+        link = f"https://wa.me/{num}?text={urllib.parse.quote(copy)}"
+        st.markdown(
+            f'<a href="{link}" target="_blank" style="display:inline-block;padding:0.7rem 1.2rem;background:linear-gradient(135deg,#0891b2,#0e7490);color:#ecfeff;border-radius:10px;text-decoration:none;font-weight:500;border:1px solid rgba(34,211,238,0.3);">💬 Abrir no WhatsApp</a>',
+            unsafe_allow_html=True,
+        )
