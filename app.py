@@ -6,6 +6,8 @@ import urllib.parse
 import pandas as pd
 from playwright.sync_api import sync_playwright
 from io import StringIO
+from pathlib import Path
+import streamlit.components.v1 as components
 
 # ============================================================
 # 🚀 AUTO-INSTALAÇÃO DO PLAYWRIGHT
@@ -368,10 +370,11 @@ if "lista_interesse" not in st.session_state:
 # ============================================================
 # 🖥️ UI
 # ============================================================
-aba1, aba2, aba3 = st.tabs([
+aba1, aba2, aba3, aba4 = st.tabs([
     "🦅 Mineração Phoenix",
     "🤖 Construtor de Site",
     "💬 Prospectar Cliente",
+    "🎯 Roleta de Nichos",
 ])
 
 # ---- ABA 1 ----
@@ -421,7 +424,8 @@ with aba1:
     st.write("")
     col1, col2, col3 = st.columns([2, 2, 1])
     with col1:
-        termo = st.text_input("🔎 Nicho / Profissão", "Barbearia")
+        nicho_default = st.session_state.get("nicho_roleta", "Barbearia")
+        termo = st.text_input("🔎 Nicho / Profissão", value=nicho_default)
     with col2:
         cidade = st.text_input("📍 Cidade", "São Paulo")
     with col3:
@@ -574,3 +578,39 @@ Posso te enviar o link desse layout, sem compromisso, pra você ver o que acha?"
             f'<a href="{link}" target="_blank" style="display:inline-block;padding:0.7rem 1.2rem;background:linear-gradient(135deg,#0891b2,#0e7490);color:#ecfeff;border-radius:10px;text-decoration:none;font-weight:500;border:1px solid rgba(34,211,238,0.3);">💬 Abrir no WhatsApp</a>',
             unsafe_allow_html=True,
         )
+
+# ---- ABA 4: Roleta de Nichos ----
+with aba4:
+    st.markdown('<p class="phoenix-title">🎯 Roleta de Nichos</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="phoenix-sub">Gire a roleta, escolha o nicho e use na mineração — o dossiê de vendas já vem pronto</p>',
+        unsafe_allow_html=True,
+    )
+
+    # Campo rápido: colar o nicho sorteado e enviar para a Mineração
+    col_r1, col_r2 = st.columns([3, 1])
+    with col_r1:
+        nicho_digitado = st.text_input(
+            "Nicho sorteado (cole aqui após girar)",
+            value=st.session_state.get("nicho_roleta", ""),
+            placeholder="Ex: Barbearia, Clínica Odonto, Pet Shop…",
+            key="input_nicho_roleta",
+        )
+    with col_r2:
+        st.write("")  # alinhamento
+        st.write("")
+        if st.button("📌 Usar na Mineração", use_container_width=True):
+            if nicho_digitado.strip():
+                st.session_state["nicho_roleta"] = nicho_digitado.strip()
+                st.success(f"Nicho **{nicho_digitado.strip()}** definido. Vá na aba Mineração.")
+            else:
+                st.warning("Digite ou cole o nicho sorteado.")
+
+    st.write("")
+    try:
+        html_path = Path(__file__).parent / "roleta-nichos.html"
+        roleta_html = html_path.read_text(encoding="utf-8")
+        components.html(roleta_html, height=920, scrolling=True)
+    except Exception as e:
+        st.error(f"Não foi possível carregar a roleta: {e}")
+        st.info("Certifique-se de que o arquivo `roleta-nichos.html` está na mesma pasta do app.py.")
